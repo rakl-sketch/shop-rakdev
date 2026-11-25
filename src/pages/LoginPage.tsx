@@ -1,0 +1,18 @@
+import { useState } from 'react';
+import type { FormEvent } from 'react';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react';
+import { useAuth } from '../app/AuthProvider';
+import { useToast } from '../components/ui/Toast';
+import { Button } from '../components/ui/Button';
+import { demoMode } from '../lib/env';
+
+export default function LoginPage() {
+  const { user, profile, signIn, refreshProfile } = useAuth(); const [params] = useSearchParams(); const navigate = useNavigate(); const { toast } = useToast();
+  const [email, setEmail] = useState(''); const [password, setPassword] = useState(''); const [show, setShow] = useState(false); const [loading, setLoading] = useState(false);
+  const nextPath = params.get('next') || '/account';
+  const adminDestination = nextPath === '/admin' || nextPath.startsWith('/admin/');
+  if (user && (!adminDestination || (profile && ['admin', 'owner'].includes(profile.role)))) return <Navigate to={nextPath} replace/>;
+  const submit = async (event: FormEvent) => { event.preventDefault(); setLoading(true); try { await signIn(email, password); await refreshProfile(); toast('Login berhasil.', 'success'); navigate(params.get('next') || '/account'); } catch (error) { toast(error instanceof Error ? error.message : 'Tidak dapat login.', 'error'); } finally { setLoading(false); } };
+  return <div className="auth-page"><div className="auth-visual"><div className="auth-visual-image"/><div className="auth-visual-content"><Link to="/" className="brand brand-light"><span className="brand-mark">r<span>.</span></span><span className="brand-word">rakDEV<small>digital shop</small></span></Link><span className="eyebrow">YOUR CREATIVE INVENTORY</span><h2>Build something<br/><em>worth exploring.</em></h2><p>Semua kebutuhan digital server Minecraft, ada di satu tempat.</p><span className="auth-visual-index">SHOP rakDEV / 2026</span></div></div><div className="auth-form-wrap"><div className="auth-form-top"><Link to="/" className="auth-back"><ArrowLeft size={16}/> Kembali ke toko</Link><span>Belum punya akun? <Link to="/register">Daftar</Link></span></div><form className="auth-form" onSubmit={submit}><div className="eyebrow">WELCOME BACK</div><h1>Masuk ke <em>akun.</em></h1><p>Akses pembelian, unduhan, dan riwayat transaksi kamu.</p>{user && adminDestination && <div className="form-preview-note">Akun ini bukan admin. Masuk dengan akun admin atau owner untuk membuka dashboard.</div>}{demoMode && <div className="form-preview-note">Supabase belum dikonfigurasi. Login aktif setelah project dihubungkan.</div>}<label>Email address<div className="input-icon"><Mail size={17}/><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" required autoComplete="email"/></div></label><label>Password<div className="input-icon"><LockKeyhole size={17}/><input type={show ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Masukkan password" required autoComplete="current-password"/><button type="button" onClick={() => setShow(!show)} aria-label="Tampilkan password">{show ? <EyeOff size={17}/> : <Eye size={17}/>}</button></div></label><Button full loading={loading}>Masuk <ArrowRight size={16}/></Button><div className="auth-divider"><span/> <small>SECURE ACCOUNT ACCESS</small> <span/></div><p className="auth-legal">Dengan masuk, kamu menyetujui <Link to="/terms">Ketentuan Layanan</Link> dan <Link to="/privacy">Kebijakan Privasi</Link>.</p></form><div className="auth-copyright">© {new Date().getFullYear()} Shop rakDEV</div></div></div>;
+}

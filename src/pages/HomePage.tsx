@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Blocks, Boxes, ChevronRight, Code2, Download, ShieldCheck, Sparkles, Terminal, Zap } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Blocks, Boxes, ChevronRight, Download, ShieldCheck, Terminal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../services/products';
 import type { Product } from '../types';
@@ -10,10 +10,10 @@ import { Button } from '../components/ui/Button';
 import { demoMode } from '../lib/env';
 
 const categories = [
-  { slug: 'plugins', name: 'Plugins', caption: 'Ekstensi server', icon: Blocks, number: '01' },
-  { slug: 'skript', name: 'Skript', caption: 'Automasi & sistem', icon: Terminal, number: '02' },
-  { slug: 'maps', name: 'Maps', caption: 'World & environment', icon: Boxes, number: '03' },
-  { slug: 'server-backup', name: 'Server Backup', caption: 'Arsip siap restore', icon: Download, number: '04' },
+  { slug: 'plugins', name: 'Plugins', caption: 'Ekstensi server', icon: Blocks },
+  { slug: 'skript', name: 'Skript', caption: 'Automasi & sistem', icon: Terminal },
+  { slug: 'maps', name: 'Maps', caption: 'World & environment', icon: Boxes },
+  { slug: 'server-backup', name: 'Server Backup', caption: 'Arsip siap restore', icon: Download },
 ];
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -24,27 +24,27 @@ export default function HomePage() {
     <section className="hero-section">
       <div className="page-container hero-grid">
         <div className="hero-copy">
-          <div className="hero-eyebrow"><span><Sparkles size={14}/></span> MINECRAFT DIGITAL MARKETPLACE</div>
+          <div className="hero-eyebrow">MINECRAFT DIGITAL MARKETPLACE</div>
           <h1>Everything your<br/><em>server needs.</em></h1>
           <p>Temukan plugin, skript, map, dan backup server pilihan untuk membawa pengalaman Minecraft ke level berikutnya.</p>
           <div className="hero-actions"><Link to="/shop"><Button>Jelajahi produk <ArrowRight size={17}/></Button></Link><Link className="text-link" to="/shop">Lihat semua produk <ArrowUpRight size={15}/></Link></div>
           <div className="hero-proof"><div className="proof-icon"><ShieldCheck size={17}/></div><span><strong>Checkout via WhatsApp</strong><small>Pesanan diteruskan langsung ke admin untuk konfirmasi pembayaran.</small></span></div>
         </div>
         <div className="hero-art">
-          <div className="hero-art-glow"/>
-          <div className="hero-art-frame"><img src="https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&w=1200&q=90" alt="World Minecraft dengan landscape hijau"/><div className="hero-art-overlay"/></div>
-          <div className="floating-card floating-card-top"><span className="floating-icon"><Code2 size={17}/></span><span><b>Built for creators</b><small>Tools for your world</small></span><span className="floating-check"><Zap size={14}/></span></div>
-          <div className="floating-card floating-card-bottom"><div className="mini-stack"><i/><i/><i/></div><span><b>Digital delivery</b><small>Download in one place</small></span><ArrowUpRight size={16}/></div>
-          <div className="hero-vertical-label">RAKDEV / DIGITAL GOODS</div>
+          <div className="hero-art-frame">
+            <img src="https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&w=1400&q=90" alt="World Minecraft dengan landscape hijau"/>
+            <div className="hero-art-overlay"/>
+            <div className="hero-art-label"><span>WORLD / 01</span><span>BUILT FOR CREATORS</span></div>
+          </div>
         </div>
       </div>
-      <div className="hero-bottom-line page-container"><span>TOOLS. WORLDS. POSSIBILITIES.</span><span>01 — 04 / CATEGORIES</span></div>
+      <div className="hero-bottom-line page-container"><span>TOOLS. WORLDS. POSSIBILITIES.</span><span>WHATSAPP CHECKOUT · 0881 5825 403</span></div>
     </section>
 
     <section className="category-section page-container section-space">
       <SectionHeading eyebrow="BROWSE BY CATEGORY" title="Find what you need." description="Produk digital yang dikurasi untuk berbagai kebutuhan server Minecraft." action={<Link to="/shop" className="arrow-link">Semua kategori <ArrowUpRight size={16}/></Link>}/>
-      <div className="category-grid">{categories.map(({ slug, name, caption, icon: Icon, number }) => <Link to={`/shop?category=${slug}`} className="category-tile" key={slug}>
-        <span className="category-number">{number}</span><span className="category-icon"><Icon size={23}/></span><span className="category-info"><strong>{name}</strong><small>{caption}</small></span><span className="category-arrow"><ArrowUpRight size={17}/></span>
+      <div className="category-grid">{categories.map(({ slug, name, caption, icon: Icon }) => <Link to={`/shop?category=${slug}`} className="category-tile" key={slug}>
+        <span className="category-icon"><Icon size={19}/></span><span className="category-info"><strong>{name}</strong><small>{caption}</small></span><span className="category-arrow"><ArrowUpRight size={15}/></span>
       </Link>)}</div>
     </section>
 

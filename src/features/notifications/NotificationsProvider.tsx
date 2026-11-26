@@ -72,7 +72,7 @@ export function NotificationsProvider({ children }: PropsWithChildren) {
         const key = `announcement-${row.id}`;
         if (!toastedRef.current.has(key)) {
           toastedRef.current.add(key);
-          toast(`[pp] Shop rakDEV: ${row.product_name}`, 'info');
+          toast(`Produk baru: ${row.product_name}`, 'info');
         }
       })
       .subscribe();

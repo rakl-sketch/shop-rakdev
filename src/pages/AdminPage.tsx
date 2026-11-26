@@ -107,6 +107,18 @@ export default function AdminPage() {
     void supabase.from('categories').select('id,name').order('sort_order').then(({ data }) => setCategories(data ?? []));
   }, [profile?.id, profile?.role]);
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowForm(false);
+        setEditingId(null);
+        setShowCategoryForm(false);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   if (loading) return <div className="admin-loading">Memeriksa akses admin…</div>;
   if (!user) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname)}`} replace/>;
   if (!profile || !['admin', 'owner'].includes(profile.role)) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname)}`} replace/>;
@@ -338,9 +350,9 @@ export default function AdminPage() {
       </div>}
     </main>
 
-    {showForm && <div className="modal-backdrop" onClick={() => setShowForm(false)}>
-      <form className="admin-modal" onClick={(event) => event.stopPropagation()} onSubmit={createProduct}>
-        <div className="modal-heading"><div><span className="eyebrow">PRODUCT MANAGEMENT</span><h2>Tambah produk</h2></div><button type="button" className="icon-button" onClick={() => setShowForm(false)}><X size={19}/></button></div>
+    {showForm && <div className="modal-backdrop" role="presentation" onClick={() => setShowForm(false)}>
+      <form className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="product-create-title" onClick={(event) => event.stopPropagation()} onSubmit={createProduct}>
+        <div className="modal-heading"><div><span className="eyebrow">PRODUCT MANAGEMENT</span><h2 id="product-create-title">Tambah produk</h2></div><button type="button" className="icon-button" onClick={() => setShowForm(false)}><X size={19}/></button></div>
         <label>Nama produk<input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required maxLength={120}/></label>
         <label>Slug (opsional)<input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="dibuat-otomatis-dari-nama"/></label>
         <label>Kategori<select value={form.category_id} onChange={(event) => setForm({ ...form, category_id: event.target.value })} required><option value="">Pilih kategori</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
@@ -353,9 +365,9 @@ export default function AdminPage() {
       </form>
     </div>}
 
-    {editingId && <div className="modal-backdrop" onClick={() => setEditingId(null)}>
-      <form className="admin-modal" onClick={(event) => event.stopPropagation()} onSubmit={updateProduct}>
-        <div className="modal-heading"><div><span className="eyebrow">PRODUCT MANAGEMENT</span><h2>Edit produk</h2></div><button type="button" className="icon-button" onClick={() => setEditingId(null)}><X size={19}/></button></div>
+    {editingId && <div className="modal-backdrop" role="presentation" onClick={() => setEditingId(null)}>
+      <form className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="product-edit-title" onClick={(event) => event.stopPropagation()} onSubmit={updateProduct}>
+        <div className="modal-heading"><div><span className="eyebrow">PRODUCT MANAGEMENT</span><h2 id="product-edit-title">Edit produk</h2></div><button type="button" className="icon-button" onClick={() => setEditingId(null)}><X size={19}/></button></div>
         <label>Nama produk<input value={editForm.name} onChange={(event) => setEditForm({ ...editForm, name: event.target.value })} required maxLength={120}/></label>
         <label>Slug<input value={editForm.slug} onChange={(event) => setEditForm({ ...editForm, slug: event.target.value })}/></label>
         <label>Kategori<select value={editForm.category_id} onChange={(event) => setEditForm({ ...editForm, category_id: event.target.value })} required><option value="">Pilih kategori</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
@@ -367,9 +379,9 @@ export default function AdminPage() {
       </form>
     </div>}
 
-    {showCategoryForm && <div className="modal-backdrop" onClick={() => setShowCategoryForm(false)}>
-      <form className="admin-modal" onClick={(event) => event.stopPropagation()} onSubmit={createCategory}>
-        <div className="modal-heading"><div><span className="eyebrow">CATEGORY MANAGEMENT</span><h2>Tambah kategori</h2></div><button type="button" className="icon-button" onClick={() => setShowCategoryForm(false)}><X size={19}/></button></div>
+    {showCategoryForm && <div className="modal-backdrop" role="presentation" onClick={() => setShowCategoryForm(false)}>
+      <form className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="category-create-title" onClick={(event) => event.stopPropagation()} onSubmit={createCategory}>
+        <div className="modal-heading"><div><span className="eyebrow">CATEGORY MANAGEMENT</span><h2 id="category-create-title">Tambah kategori</h2></div><button type="button" className="icon-button" onClick={() => setShowCategoryForm(false)}><X size={19}/></button></div>
         <label>Nama kategori<input value={categoryForm.name} onChange={(event) => setCategoryForm({ ...categoryForm, name: event.target.value })} required maxLength={80}/></label>
         <label>Slug (opsional)<input value={categoryForm.slug} onChange={(event) => setCategoryForm({ ...categoryForm, slug: event.target.value })} placeholder="dibuat-otomatis-dari-nama"/></label>
         <label>Deskripsi<input value={categoryForm.description} onChange={(event) => setCategoryForm({ ...categoryForm, description: event.target.value })} maxLength={200}/></label>

@@ -11,5 +11,5 @@ const content: Record<string, { title: string; text: string }> = {
 };
 export default function InfoPage() {
   const { pathname } = useLocation(); const key = pathname.replace('/', ''); const item = content[key] ?? content.about;
-  return <div className="page-container info-page"><div className="breadcrumbs"><Link to="/">Home</Link><span>/</span><b>{key}</b></div><span className="eyebrow">SHOP rakDEV / INFORMATION</span><h1>{item.title}</h1><p>{item.text}</p><div className="info-callout">Halaman informasi ini merupakan kerangka awal. Lengkapi konten dan data bisnis sebelum website dipublikasikan untuk umum.</div><Link to="/shop"><Button>Lanjut ke Shop <ArrowUpRight size={16}/></Button></Link></div>;
+  return <div className="page-container info-page"><div className="breadcrumbs"><Link to="/">Home</Link><span>/</span><b>{key}</b></div><span className="eyebrow">SHOP rakDEV / INFORMATION</span><h1>{item.title}</h1><p>{item.text}</p><div className="info-callout">Hubungi admin Shop rakDEV jika kamu membutuhkan informasi lebih detail terkait produk, pesanan, atau pengunduhan.</div><Link to="/shop"><Button>Lanjut ke Shop <ArrowUpRight size={16}/></Button></Link></div>;
 }

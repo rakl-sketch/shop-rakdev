@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, BellRing } from 'lucide-react';
 import { useNotifications } from './NotificationsProvider';
@@ -12,10 +12,26 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [pushOn, setPushOn] = useState(false);
   const [busy, setBusy] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
   const supported = pushSupported();
   const permission = pushPermission();
 
   useEffect(() => { if (supported) void isSubscribed().then(setPushOn).catch(() => setPushOn(false)); }, [supported]);
+  useEffect(() => {
+    if (!open) return;
+    const handlePointer = (event: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(event.target as Node)) setOpen(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', handlePointer);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointer);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
   if (!supabaseConfigured) return null;
 
   const toggle = () => {
@@ -33,13 +49,13 @@ export function NotificationBell() {
     finally { setBusy(false); }
   };
 
-  return <div className="notif">
-    <button className="notif-trigger" aria-label={`Notifikasi, ${unread} belum dibaca`} aria-expanded={open} onClick={toggle}>
+  return <div className="notif" ref={panelRef}>
+    <button className="notif-trigger" aria-label={`Notifikasi, ${unread} belum dibaca`} aria-expanded={open} aria-controls="notification-panel" onClick={toggle}>
       {unread > 0 ? <BellRing size={20}/> : <Bell size={20}/>}
       {unread > 0 && <span className="cart-count">{unread}</span>}
     </button>
-    {open && <div className="notif-panel">
-      <div className="notif-head"><b>Notifikasi</b><small>{unread ? `${unread} belum dibaca` : 'Semua terbaca'}</small></div>
+    {open && <div id="notification-panel" className="notif-panel" role="dialog" aria-modal="false" aria-labelledby="notification-title">
+      <div className="notif-head"><b id="notification-title">Notifikasi</b><small>{unread ? `${unread} belum dibaca` : 'Semua terbaca'}</small></div>
       {items.length === 0 ? <p className="notif-empty">Belum ada notifikasi.</p> : <ul className="notif-list">
         {items.map((item) => <li key={item.id}>
           <Link to={item.link} onClick={() => setOpen(false)} className={item.read ? 'notif-item' : 'notif-item notif-unread'}>

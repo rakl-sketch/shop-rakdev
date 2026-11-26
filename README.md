@@ -123,7 +123,7 @@ Remaining functions:
 
 Removed Midtrans functions: `create-payment`, `verify-payment`, `midtrans-webhook`.
 
-Set `APP_ORIGIN` in Supabase Edge Function secrets to the deployed site origin, for example `https://shop.rakdev.my.id` (no trailing slash).
+Set `APP_ORIGIN` in Supabase Edge Function secrets to the deployed site origin, for example `https://shop.rakdev.web.id` (no trailing slash).
 
 ## Deployment (GitHub Pages + Actions)
 
@@ -158,11 +158,11 @@ SPA fallback uses `404.html` (a copy of `index.html`, generated at build time). 
 ### 4. Custom domain
 
 1. GitHub repository → **Settings → Pages**.
-2. Set **Custom domain** to `shop.rakdev.my.id`.
+2. Set **Custom domain** to `shop.rakdev.web.id`.
 3. Point the `shop` DNS CNAME to `rakl-sketch.github.io`.
 4. After DNS verification, enable **Enforce HTTPS**.
 
-`public/CNAME` already contains `shop.rakdev.my.id` and is published with the build.
+`public/CNAME` already contains `shop.rakdev.web.id` and is published with the build.
 
 ## Testing
 

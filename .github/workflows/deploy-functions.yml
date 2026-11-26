@@ -6,6 +6,7 @@ on:
     paths:
       - 'supabase/functions/**'
       - 'supabase/config.toml'
+      - '.github/workflows/deploy-functions.yml'
   workflow_dispatch:
 
 permissions:
@@ -27,4 +28,4 @@ jobs:
         with:
           version: latest
       # verify_jwt per fungsi dibaca dari supabase/config.toml.
-      - run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"
+      - run: supabase functions deploy --remote="$SUPABASE_PROJECT_REF" --yes

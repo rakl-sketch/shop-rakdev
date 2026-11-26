@@ -28,7 +28,7 @@ export default function HomePage() {
           <h1>Everything your<br/><em>server needs.</em></h1>
           <p>Temukan plugin, skript, map, dan backup server pilihan untuk membawa pengalaman Minecraft ke level berikutnya.</p>
           <div className="hero-actions"><Link to="/shop"><Button>Jelajahi produk <ArrowRight size={17}/></Button></Link><Link className="text-link" to="/shop">Lihat semua produk <ArrowUpRight size={15}/></Link></div>
-          <div className="hero-proof"><div className="proof-icon"><ShieldCheck size={17}/></div><span><strong>Transaksi terverifikasi</strong><small>File digital tersedia di akun setelah pembayaran berhasil.</small></span></div>
+          <div className="hero-proof"><div className="proof-icon"><ShieldCheck size={17}/></div><span><strong>Checkout via WhatsApp</strong><small>Pesanan diteruskan langsung ke admin untuk konfirmasi pembayaran.</small></span></div>
         </div>
         <div className="hero-art">
           <div className="hero-art-glow"/>
@@ -56,7 +56,7 @@ export default function HomePage() {
 
     <section className="promise-section page-container section-space">
       <div className="promise-heading"><div className="eyebrow">SHOP WITH CONFIDENCE</div><h2>Simple process.<br/><em>Ready to build.</em></h2><p>Pengalaman belanja digital yang jelas dari memilih produk sampai file siap diunduh.</p></div>
-      <div className="promise-list"><div><span>01</span><div><b>Pilih produk</b><p>Periksa deskripsi, versi Minecraft, platform, dan detail file sebelum membeli.</p></div><ChevronRight/></div><div><span>02</span><div><b>Bayar dengan QRIS</b><p>Pembayaran diproses melalui Midtrans dan diverifikasi di server.</p></div><ChevronRight/></div><div><span>03</span><div><b>Download dari akun</b><p>Produk yang sudah dibayar tersedia di halaman pembelian akun kamu.</p></div><ChevronRight/></div></div>
+      <div className="promise-list"><div><span>01</span><div><b>Pilih produk</b><p>Periksa deskripsi, versi Minecraft, platform, dan detail file sebelum membeli.</p></div><ChevronRight/></div><div><span>02</span><div><b>Pesan via WhatsApp</b><p>Keranjang dan data pembeli otomatis disusun menjadi pesan WhatsApp untuk admin.</p></div><ChevronRight/></div><div><span>03</span><div><b>Konfirmasi &amp; terima produk</b><p>Setelah pembayaran dikonfirmasi, produk digital dikirim atau dibuka di akun kamu.</p></div><ChevronRight/></div></div>
     </section>
     <section className="cta-band"><div className="page-container cta-inner"><div><span className="eyebrow">YOUR NEXT BUILD STARTS HERE</span><h2>Make your server<br/><em>stand out.</em></h2></div><Link to="/shop"><Button variant="light">Explore the shop <ArrowUpRight size={17}/></Button></Link></div></section>
   </>;

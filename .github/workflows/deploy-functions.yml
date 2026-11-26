@@ -5,7 +5,11 @@ on:
     branches: [main]
     paths:
       - 'supabase/functions/**'
+      - 'supabase/config.toml'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: deploy-functions
@@ -22,5 +26,5 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      # verify_jwt per fungsi (midtrans-webhook = false) dibaca dari supabase/config.toml
+      # verify_jwt per fungsi dibaca dari supabase/config.toml.
       - run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF"

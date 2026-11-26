@@ -6,14 +6,13 @@ import type { Product } from '../types';
 import { rupiah } from '../lib/format';
 import { useCart } from '../app/CartProvider';
 import { useToast } from '../components/ui/Toast';
-import { useAuth } from '../app/AuthProvider';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/shared/EmptyState';
 import { demoMode } from '../lib/env';
 
 export default function ProductPage() {
   const { slug = '' } = useParams(); const [product, setProduct] = useState<Product | null>(null); const [loading, setLoading] = useState(true);
-  const { add } = useCart(); const { toast } = useToast(); const { user } = useAuth(); const navigate = useNavigate();
+  const { add } = useCart(); const { toast } = useToast(); const navigate = useNavigate();
   useEffect(() => { getProductBySlug(slug).then(setProduct).catch(() => setProduct(null)).finally(() => setLoading(false)); }, [slug]);
   if (loading) return <div className="page-container detail-loading"><div className="product-skeleton"/><div className="product-skeleton"/></div>;
   if (!product) return <div className="page-container page-empty"><EmptyState title="Produk tidak ditemukan" description="Produk mungkin sudah dihapus atau tidak lagi dipublikasikan." action={<Link to="/shop"><Button>Kembali ke Shop</Button></Link>}/></div>;
@@ -28,8 +27,8 @@ export default function ProductPage() {
         <div className="detail-price">{rupiah(product.price)} {product.compare_at_price && product.compare_at_price > product.price && <del>{rupiah(product.compare_at_price)}</del>}</div>
         <p className="detail-description">{product.description}</p>
         <div className="detail-specs"><div><span>VERSI MINECRAFT</span><b>{product.minecraft_version ?? 'Lihat deskripsi'}</b></div><div><span>PLATFORM</span><b>{product.platform ?? 'Sesuai deskripsi'}</b></div><div><span>UKURAN FILE</span><b>{product.file_size ?? 'Informasi belum tersedia'}</b></div><div><span>FORMAT</span><b>{product.category_slug === 'plugins' ? 'JAR / ZIP' : product.category_slug === 'skript' ? 'SK / ZIP' : 'ZIP / ARCHIVE'}</b></div></div>
-        <div className="detail-buttons"><Button full onClick={addToCart} disabled={!canBuy}><ShoppingBag size={17}/> Tambah ke keranjang</Button><Button full variant="outline" onClick={() => { addToCart(); navigate(user ? '/checkout' : '/login?next=/checkout'); }} disabled={!canBuy}>Beli sekarang <ArrowUpRight size={16}/></Button></div>
-        <div className="detail-assurance"><div><ShieldCheck size={18}/><span><b>Pembayaran terverifikasi</b><small>Akses produk dibuka setelah status pembayaran valid.</small></span></div><div><Download size={18}/><span><b>Download dari akun</b><small>File dapat diunduh ulang dari halaman pembelian.</small></span></div></div>
+        <div className="detail-buttons"><Button full onClick={addToCart} disabled={!canBuy}><ShoppingBag size={17}/> Tambah ke keranjang</Button><Button full variant="outline" onClick={() => { addToCart(); navigate('/checkout'); }} disabled={!canBuy}>Beli sekarang <ArrowUpRight size={16}/></Button></div>
+        <div className="detail-assurance"><div><ShieldCheck size={18}/><span><b>Konfirmasi via WhatsApp</b><small>Pesanan diteruskan ke admin melalui WhatsApp untuk konfirmasi pembayaran.</small></span></div><div><Download size={18}/><span><b>Download dari akun</b><small>File dapat diunduh ulang dari halaman pembelian.</small></span></div></div>
         <div className="detail-note"><Check size={15}/> Pastikan kompatibilitas produk sebelum melakukan pembelian.</div>
       </div>
     </div>

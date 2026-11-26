@@ -1,10 +1,10 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { SiteLayout } from './components/layout/SiteLayout';
+import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
-import PaymentPage from './pages/PaymentPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import { AccountLayout, AccountOverview, ProfilePage, PurchasesPage, DownloadsPage, TransactionsPage } from './pages/AccountPage';
@@ -15,12 +15,11 @@ import NotFoundPage from './pages/NotFoundPage';
 export default function App() {
   return <BrowserRouter basename={import.meta.env.BASE_URL}><Routes>
     <Route element={<SiteLayout/>}>
-      <Route path="/" element={<Navigate to="/admin" replace/>}/>
+      <Route path="/" element={<HomePage/>}/>
       <Route path="/shop" element={<ShopPage/>}/>
       <Route path="/product/:slug" element={<ProductPage/>}/>
       <Route path="/cart" element={<CartPage/>}/>
       <Route path="/checkout" element={<CheckoutPage/>}/>
-      <Route path="/payment/:orderId" element={<PaymentPage/>}/>
       <Route path="/login" element={<LoginPage/>}/>
       <Route path="/register" element={<RegisterPage/>}/>
       <Route path="/account" element={<AccountLayout/>}>

@@ -21,6 +21,26 @@ export type Product = {
   demo?: boolean;
 };
 
-export type CartItem = { product: Product; quantity: number };
+export type CartItem = {
+  product: Product;
+  quantity: number;
+  /** Optional variant selected by the buyer, e.g. a specific Minecraft version. */
+  variant?: string | null;
+};
+
 export type Profile = { id: string; display_name: string | null; role: 'customer' | 'admin' | 'owner' };
-export type OrderSummary = { id: string; order_number: string; status: string; total_amount: number; created_at: string };
+
+export type OrderStatus = 'pending' | 'paid' | 'expired' | 'failed' | 'cancelled' | 'refunded';
+
+export type OrderSummary = {
+  id: string;
+  order_number: string;
+  status: OrderStatus | string;
+  total_amount: number;
+  created_at: string;
+  channel?: string | null;
+  buyer_name?: string | null;
+  buyer_phone?: string | null;
+  shipping_address?: string | null;
+  notes?: string | null;
+};

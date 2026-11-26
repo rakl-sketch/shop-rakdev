@@ -1,8 +1,5 @@
 project_id = "shop-rakdev"
 
-[functions.midtrans-webhook]
-verify_jwt = false
-
 # Dipanggil browser anonim (tanpa JWT pengguna); input divalidasi di dalam fungsi.
 [functions.push-subscribe]
 verify_jwt = false

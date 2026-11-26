@@ -5,6 +5,9 @@ const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefin
 export const pushSupported = () =>
   Boolean(supabase && vapidPublicKey) && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 
+export const pushPermission = (): NotificationPermission | 'unsupported' =>
+  typeof Notification === 'undefined' ? 'unsupported' : Notification.permission;
+
 function keyToBytes(base64Url: string) {
   const padded = base64Url + '='.repeat((4 - (base64Url.length % 4)) % 4);
   const raw = atob(padded.replace(/-/g, '+').replace(/_/g, '/'));
@@ -24,7 +27,8 @@ export async function isSubscribed() {
 }
 
 export async function subscribePush() {
-  if (!supabase || !vapidPublicKey) throw new Error('Notifikasi belum dikonfigurasi.');
+  if (!supabase || !vapidPublicKey) throw new Error('Notifikasi push belum dikonfigurasi.');
+  if (pushPermission() === 'denied') throw new Error('Izin notifikasi diblokir browser. Aktifkan lewat pengaturan situs.');
   const permission = await Notification.requestPermission();
   if (permission !== 'granted') throw new Error('Izin notifikasi ditolak.');
   const reg = await registration();

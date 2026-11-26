@@ -22,7 +22,7 @@ export function Header() {
   const submitSearch = (event: FormEvent) => { event.preventDefault(); navigate(`/shop?q=${encodeURIComponent(search)}`); setMenuOpen(false); };
   const logout = async () => { try { await signOut(); toast('Berhasil keluar dari akun.', 'success'); navigate('/'); } catch (error) { toast(error instanceof Error ? error.message : 'Gagal keluar.', 'error'); } };
   return <>
-    <div className="announcement"><span>Marketplace kebutuhan Minecraft</span><span className="announcement-dot"/> <span>Produk digital • Download setelah pembayaran</span></div>
+    <div className="announcement"><span>Marketplace kebutuhan Minecraft</span><span className="announcement-dot"/> <span>Produk digital • Checkout via WhatsApp</span></div>
     <header className="site-header">
       <div className="header-main page-container">
         <button className="icon-button mobile-menu-trigger" aria-label="Buka menu" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X/> : <Menu/>}</button>

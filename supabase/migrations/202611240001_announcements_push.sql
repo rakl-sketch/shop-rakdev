@@ -34,9 +34,14 @@ security definer
 set search_path = ''
 as $$
 begin
-  if new.is_published and (tg_op = 'INSERT' or coalesce(old.is_published, false) = false) then
-    insert into public.announcements (product_id, product_name, product_slug, image_url)
-    values (new.id, new.name, new.slug, new.image_url);
+  if new.is_published then
+    if tg_op = 'INSERT' then
+      insert into public.announcements (product_id, product_name, product_slug, image_url)
+      values (new.id, new.name, new.slug, new.image_url);
+    elsif coalesce(old.is_published, false) = false then
+      insert into public.announcements (product_id, product_name, product_slug, image_url)
+      values (new.id, new.name, new.slug, new.image_url);
+    end if;
   end if;
   return new;
 end;

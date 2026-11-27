@@ -24,7 +24,7 @@ export const previewProducts: Product[] = [
     short_description: 'Contoh map spawn bernuansa alam untuk server.', price: 79000,
     category_slug: 'maps', category_name: 'Maps', minecraft_version: '1.21.x', platform: 'Java Edition',
     file_size: '84 MB', rating: 5, review_count: 9, is_featured: true, is_new: false, demo: true,
-    image_url: 'https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&w=900&q=85',
+    image_url: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=900&q=85',
   },
   {
     id: 'preview-backup-01', name: 'Survival Server Backup', slug: 'survival-server-backup',

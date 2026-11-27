@@ -428,27 +428,6 @@ textarea:focus-visible {
 .arrow-link:hover { color: #5b8b68; }
 .hero-section .text-link { color: #dce8dd; }
 .hero-section .text-link:hover { color: #fff; }
-.hero-proof {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 28px;
-}
-.proof-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, .08);
-  border: 1px solid rgba(255, 255, 255, .12);
-  color: #b9d3b9;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-.hero-proof strong,
-.hero-proof small { display: block; }
-.hero-proof strong { font-size: 12px; color: #eef4ee; }
-.hero-proof small { font-size: 11px; color: #9fb2a4; margin-top: 3px; line-height: 1.5; }
 .hero-art {
   height: auto;
   min-height: 0;
@@ -486,14 +465,12 @@ textarea:focus-visible {
   .hero-eyebrow,
   .hero-copy h1,
   .hero-copy > p,
-  .hero-actions,
-  .hero-proof {
+  .hero-actions {
     animation: hero-rise .7s var(--ease-enter) both;
   }
   .hero-copy h1 { animation-delay: .08s; }
   .hero-copy > p { animation-delay: .16s; }
   .hero-actions { animation-delay: .24s; }
-  .hero-proof { animation-delay: .32s; }
   .hero-art-frame { animation: hero-settle 1.1s var(--ease-enter) both; }
 }
 @keyframes hero-rise {
@@ -2547,7 +2524,6 @@ textarea:focus-visible {
   .hero-actions { margin-top: 18px; gap: 12px; flex-wrap: wrap; }
   .hero-actions .button { min-height: 38px; font-size: 11.5px; padding: 0 14px; }
   .text-link { font-size: 10.5px; }
-  .hero-proof { margin-top: 24px; }
   .hero-art { height: auto; }
   .hero-art-frame { height: 220px; width: 100%; }
   .hero-bottom-line {

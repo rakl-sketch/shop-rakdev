@@ -5,7 +5,6 @@ import { getProducts } from '../services/products';
 import type { Product } from '../types';
 import { ProductCard } from '../components/shared/ProductCard';
 import { SectionHeading } from '../components/shared/SectionHeading';
-import { EmptyState } from '../components/shared/EmptyState';
 import { Button } from '../components/ui/Button';
 
 const categories = [
@@ -52,12 +51,12 @@ export default function HomePage() {
       </Link>)}</div>
     </section>
 
-    <section className="featured-section section-space">
+    {(loading || products.length > 0) && <section className="featured-section section-space">
       <div className="page-container">
         <SectionHeading eyebrow="FEATURED PRODUCTS" title="Produk unggulan" description="Produk yang dipilih dan dikelola admin Shop rakDEV." action={<Link to="/shop" className="arrow-link">Lihat katalog <ArrowUpRight size={15}/></Link>}/>
-        {loading ? <div className="product-grid">{[1,2,3,4].map((x) => <div className="product-skeleton" key={x}/>)}</div> : products.length ? <div className="product-grid">{products.map((product) => <ProductCard product={product} key={product.id}/>)}</div> : <EmptyState title="Belum ada produk unggulan" description="Produk yang dipublikasikan admin akan tampil di bagian ini." action={<Link to="/shop"><Button variant="outline">Lihat katalog</Button></Link>}/>}
+        {loading ? <div className="product-grid">{[1,2,3,4].map((x) => <div className="product-skeleton" key={x}/>)}</div> : <div className="product-grid">{products.map((product) => <ProductCard product={product} key={product.id}/>)}</div>}
       </div>
-    </section>
+    </section>}
 
     <section className="promise-section page-container section-space">
       <div className="promise-heading">

@@ -7,7 +7,6 @@ import { ProductCard } from '../components/shared/ProductCard';
 import { SectionHeading } from '../components/shared/SectionHeading';
 import { EmptyState } from '../components/shared/EmptyState';
 import { Button } from '../components/ui/Button';
-import { demoMode } from '../lib/env';
 
 const categories = [
   { slug: 'plugins', name: 'Plugins', caption: 'Ekstensi server', icon: Blocks },
@@ -20,7 +19,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   useEffect(() => { getProducts({ featured: true, limit: 4 }).then(setProducts).catch(() => setProducts([])).finally(() => setLoading(false)); }, []);
   return <>
-    {demoMode && <div className="preview-banner"><span className="preview-dot"/> MODE PREVIEW <span>Data katalog di bawah adalah contoh tampilan. Hubungkan Supabase untuk mengaktifkan katalog asli.</span></div>}
     <section className="hero-section">
       <div className="page-container hero-grid">
         <div className="hero-copy">

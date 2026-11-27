@@ -2871,6 +2871,11 @@ textarea:focus-visible {
   gap: 22px;
   margin-top: 30px;
 }
+.home-hero-actions .button {
+  min-height: 40px;
+  padding: 0 18px;
+  font-size: 12.5px;
+}
 .home-text-link {
   display: inline-flex;
   align-items: center;

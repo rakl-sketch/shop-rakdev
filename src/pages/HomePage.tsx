@@ -42,7 +42,7 @@ export default function HomePage() {
           <h1>Resource server<br/><em>yang siap pakai.</em></h1>
           <p>Plugin, Skript, map, dan backup untuk membangun server Minecraft yang lebih rapi — dipilih dan disiapkan untuk langsung dipakai.</p>
           <div className="home-hero-actions">
-            <Link to="/shop"><Button>Jelajahi produk <ArrowRight size={16}/></Button></Link>
+            <Link to="/shop"><Button variant="light">Jelajahi produk <ArrowRight size={16}/></Button></Link>
             <Link to="/shop" className="home-text-link">Lihat katalog <ArrowUpRight size={14}/></Link>
           </div>
           <div className="home-hero-meta">

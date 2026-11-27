@@ -70,7 +70,7 @@ textarea:focus-visible {
   width: min(1180px, calc(100% - 32px));
   margin-inline: auto;
 }
-.section-space { padding: 64px 0; }
+.section-space { padding: 56px 0; }
 .skip-link {
   position: absolute;
   left: 16px;
@@ -356,9 +356,9 @@ textarea:focus-visible {
   position: relative;
 }
 .hero-grid {
-  min-height: clamp(420px, calc(100svh - 200px), 560px);
-  padding-top: 72px;
-  padding-bottom: 48px;
+  min-height: clamp(380px, calc(100svh - 220px), 480px);
+  padding-top: 56px;
+  padding-bottom: 40px;
   display: grid;
   grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
   align-items: center;
@@ -381,7 +381,7 @@ textarea:focus-visible {
   background: #5f8b6d;
 }
 .hero-copy h1 {
-  font: 800 clamp(36px, 4.8vw, 56px)/1.02 Manrope, sans-serif;
+  font: 800 clamp(34px, 4.4vw, 52px)/1.02 Manrope, sans-serif;
   letter-spacing: -.055em;
   color: #f7f5ee;
   margin: 22px 0 18px;
@@ -432,7 +432,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 40px;
+  margin-top: 28px;
 }
 .proof-icon {
   width: 36px;
@@ -458,7 +458,7 @@ textarea:focus-visible {
 .hero-art-frame {
   position: relative;
   width: 100%;
-  height: clamp(340px, 52vh, 520px);
+  height: clamp(280px, 42vh, 380px);
   overflow: hidden;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, .18);
@@ -468,19 +468,6 @@ textarea:focus-visible {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgba(7, 28, 20, .02) 40%, rgba(7, 28, 20, .68) 100%);
-}
-.hero-art-label {
-  position: absolute;
-  left: 16px;
-  right: 16px;
-  bottom: 14px;
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  color: rgba(255, 255, 255, .8);
-  font-size: 9px;
-  letter-spacing: .14em;
-  font-weight: 700;
 }
 .hero-bottom-line {
   border-top: 1px solid rgba(255, 255, 255, .14);
@@ -548,7 +535,7 @@ textarea:focus-visible {
   border: 0;
   border-right: 1px solid var(--line);
   border-radius: 0;
-  padding: 20px 18px;
+  padding: 16px 18px;
   display: grid;
   grid-template-columns: 38px 1fr 18px;
   align-items: center;
@@ -598,7 +585,7 @@ textarea:focus-visible {
   box-shadow: 0 12px 28px rgba(18, 49, 38, .07);
 }
 .product-image-wrap {
-  height: 190px;
+  height: 180px;
   display: block;
   position: relative;
   background: #e8eee8;
@@ -700,7 +687,7 @@ textarea:focus-visible {
 .product-price-row strong { font-size: 16px; color: #1f4332; }
 .product-price-row del { font-size: 11px; color: #a2aca4; }
 .product-skeleton {
-  height: 320px;
+  height: 330px;
   border-radius: 6px;
   background: linear-gradient(100deg, #e8eee8 20%, #f2f5f2 40%, #e8eee8 60%);
   background-size: 200% 100%;
@@ -709,17 +696,17 @@ textarea:focus-visible {
 @keyframes shimmer { to { background-position: -200% 0; } }
 .promise-section {
   display: grid;
-  grid-template-columns: .8fr 1.2fr;
+  grid-template-columns: .9fr 1.1fr;
   gap: 0;
   border-top: 1px solid var(--line-strong);
   border-bottom: 1px solid var(--line-strong);
 }
 .promise-heading { padding-right: clamp(32px, 5vw, 72px); }
 .promise-heading h2 {
-  font: 800 clamp(32px, 3.8vw, 46px)/1.02 Manrope, sans-serif;
+  font: 800 clamp(30px, 3.4vw, 40px)/1.02 Manrope, sans-serif;
   letter-spacing: -.05em;
   color: #1b3328;
-  margin: 12px 0 16px;
+  margin: 10px 0 14px;
 }
 .promise-heading > p {
   font-size: 14px;
@@ -727,13 +714,13 @@ textarea:focus-visible {
   color: #6f7d74;
   max-width: 340px;
 }
-.promise-list { border-left: 1px solid var(--line); padding-left: clamp(32px, 5vw, 72px); }
+.promise-list { border-left: 1px solid var(--line); padding-left: clamp(24px, 4vw, 56px); }
 .promise-list > div {
   display: grid;
   grid-template-columns: 34px 1fr 18px;
   gap: 16px;
   align-items: start;
-  padding: 18px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--line);
 }
 .promise-list > div:first-child { border-top: 1px solid var(--line); }
@@ -758,7 +745,7 @@ textarea:focus-visible {
   position: relative;
 }
 .cta-inner {
-  min-height: 240px;
+  min-height: 180px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -767,7 +754,7 @@ textarea:focus-visible {
 }
 .cta-inner .eyebrow { color: #a9c6ad; }
 .cta-inner h2 {
-  font: 800 clamp(34px, 4vw, 52px)/1.02 Manrope, sans-serif;
+  font: 800 clamp(30px, 3.6vw, 44px)/1.02 Manrope, sans-serif;
   letter-spacing: -.05em;
   margin: 12px 0;
   color: #f7f5ee;
@@ -1199,7 +1186,7 @@ textarea:focus-visible {
   display: grid;
   grid-template-columns: 92px 1fr auto;
   gap: 16px;
-  padding: 18px 0;
+  padding: 16px 0;
   border-bottom: 1px solid #ecefe9;
 }
 .cart-item:last-child { border-bottom: 0; }
@@ -2298,7 +2285,7 @@ textarea:focus-visible {
   margin: 20px 0;
 }
 .not-found {
-  min-height: 420px;
+  min-height: 380px;
   display: flex;
   flex-direction: column;
   align-items: center;

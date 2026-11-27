@@ -36,10 +36,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="hero-bottom-line page-container">
-        <span>TOOLS · WORLDS · POSSIBILITIES</span>
-        <span>WHATSAPP CHECKOUT · 0881 5825 403</span>
-      </div>
     </section>
 
     <section className="category-section page-container section-space">

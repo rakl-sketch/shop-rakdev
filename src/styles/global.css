@@ -448,18 +448,6 @@ textarea:focus-visible {
   inset: 0;
   background: linear-gradient(180deg, rgba(7, 28, 20, .02) 40%, rgba(7, 28, 20, .68) 100%);
 }
-.hero-bottom-line {
-  border-top: 1px solid rgba(255, 255, 255, .14);
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  color: #9fb2a4;
-  font-size: 9px;
-  letter-spacing: .14em;
-  font-weight: 700;
-}
 
 @media (prefers-reduced-motion: no-preference) {
   .hero-eyebrow,
@@ -2526,14 +2514,6 @@ textarea:focus-visible {
   .text-link { font-size: 10.5px; }
   .hero-art { height: auto; }
   .hero-art-frame { height: 220px; width: 100%; }
-  .hero-bottom-line {
-    min-height: 0;
-    padding: 10px 0;
-    flex-wrap: wrap;
-    gap: 6px 12px;
-    font-size: 8.5px;
-  }
-
   .section-space { padding: 44px 0; }
   .section-heading { align-items: flex-start; margin-bottom: 18px; gap: 12px; }
   .section-heading h2 { font-size: 24px; }

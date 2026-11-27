@@ -55,7 +55,6 @@ export function Header() {
   };
 
   return <>
-    <div className="announcement"><span>Marketplace kebutuhan Minecraft</span><span className="announcement-dot"/> <span>Produk digital • Checkout via WhatsApp</span></div>
     <header className="site-header">
       <div className="header-main page-container">
         <button

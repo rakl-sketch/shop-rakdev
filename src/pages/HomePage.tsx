@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Blocks, Boxes, ChevronRight, Download, ShieldCheck, Terminal } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Blocks, Boxes, ChevronRight, Download, Terminal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../services/products';
 import type { Product } from '../types';
@@ -30,10 +30,6 @@ export default function HomePage() {
           <div className="hero-actions">
             <Link to="/shop"><Button>Jelajahi produk <ArrowRight size={16}/></Button></Link>
             <Link className="text-link" to="/shop">Lihat katalog <ArrowUpRight size={14}/></Link>
-          </div>
-          <div className="hero-proof">
-            <div className="proof-icon"><ShieldCheck size={16}/></div>
-            <span><strong>Checkout via WhatsApp</strong><small>Pesanan dikirim ke admin untuk konfirmasi pembayaran dan pengiriman file.</small></span>
           </div>
         </div>
         <div className="hero-art">

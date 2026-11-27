@@ -34,7 +34,7 @@ export default function HomePage() {
   return <>
     <section className="home-hero">
       <div className="home-hero-media" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&w=1600&q=90" alt=""/>
+        <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=1600&q=90" alt=""/>
       </div>
       <div className="page-container home-hero-inner">
         <div className="home-hero-copy">

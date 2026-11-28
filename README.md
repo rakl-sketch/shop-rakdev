@@ -2,7 +2,7 @@
 
 Minecraft digital marketplace built with React + Vite + TypeScript, Supabase, WhatsApp checkout, and QRIS checkout via BuatQris.
 
-The storefront is public at `/`; the admin control panel is at `/admin`. Checkout supports two paths: automatic QRIS payment (logged-in buyers) and manual WhatsApp confirmation (guest or logged-in). Orders, payments, purchases, notifications, and digital delivery are recorded in PostgreSQL.
+The storefront is public at `/`; the admin control panel is at `/admin`. Checkout supports two paths: automatic QRIS payment (logged-in buyers, feature-flagged by `VITE_QRIS_ENABLED`) and manual WhatsApp confirmation (guest or logged-in). Orders, payments, purchases, notifications, and digital delivery are recorded in PostgreSQL.
 
 ## Stack
 

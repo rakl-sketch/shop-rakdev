@@ -22,3 +22,4 @@ export const supabaseUrl = isValidSupabaseUrl(rawSupabaseUrl) ? rawSupabaseUrl :
 export const supabaseKey = cleanEnvValue(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 export const supabaseConfigured = Boolean(supabaseUrl && supabaseKey);
 export const demoMode = !supabaseConfigured;
+export const qrisEnabled = import.meta.env.VITE_QRIS_ENABLED === 'true';

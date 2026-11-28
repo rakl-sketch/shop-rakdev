@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Blocks, Boxes, Check, Download, QrCode, Terminal } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Blocks, Boxes, Check, Download, MessageCircle, QrCode, Terminal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../services/products';
 import type { Product } from '../types';
 import { ProductCard } from '../components/shared/ProductCard';
 import { Button } from '../components/ui/Button';
 import { WHATSAPP_NUMBER, whatsappChatUrl } from '../lib/whatsapp';
+import { qrisEnabled } from '../lib/env';
 
 const categories = [
   { slug: 'plugins', name: 'Plugins', caption: 'Ekstensi server', icon: Blocks },
@@ -16,7 +17,7 @@ const categories = [
 
 const steps = [
   { number: '01', title: 'Pilih produk', description: 'Periksa deskripsi, versi Minecraft, platform, dan detail file sebelum membeli.' },
-  { number: '02', title: 'Checkout & bayar', description: 'Pilih QRIS untuk pembayaran otomatis, atau WhatsApp untuk konfirmasi manual dengan admin.' },
+  { number: '02', title: 'Checkout & bayar', description: qrisEnabled ? 'Pilih QRIS untuk pembayaran otomatis, atau WhatsApp untuk konfirmasi manual dengan admin.' : 'Konfirmasi pesanan dan pembayaran langsung dengan admin melalui WhatsApp.' },
   { number: '03', title: 'Terima produk', description: 'Setelah pembayaran sukses, produk digital otomatis tersedia di akun dan Download Center.' },
 ];
 
@@ -56,7 +57,7 @@ export default function HomePage() {
           </div>
           <div className="home-hero-meta">
             <span><Check size={14}/> File siap unduh</span>
-            <span><QrCode size={14}/> Checkout QRIS otomatis</span>
+            <span>{qrisEnabled ? <><QrCode size={14}/> Checkout QRIS otomatis</> : <><MessageCircle size={14}/> Konfirmasi via WhatsApp</>}</span>
           </div>
         </div>
       </div>
@@ -109,7 +110,7 @@ export default function HomePage() {
             <h2>Tiga langkah, <em>tanpa ribet.</em></h2>
           </div>
           <div className="home-section-aside">
-            <p>Pilih produk, bayar dengan QRIS atau konfirmasi via WhatsApp, lalu terima file di akun.</p>
+            <p>{qrisEnabled ? 'Pilih produk, bayar dengan QRIS atau konfirmasi via WhatsApp, lalu terima file di akun.' : 'Pilih produk, konfirmasi via WhatsApp, lalu terima file di akun.'}</p>
           </div>
         </div>
         <div className="home-process-grid">

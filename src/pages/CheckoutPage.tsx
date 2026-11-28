@@ -9,14 +9,14 @@ import { Button } from '../components/ui/Button';
 import { createQrisOrder, createWhatsAppOrder } from '../services/orders';
 import { rupiah } from '../lib/format';
 import { buildWhatsAppOrderMessage, productVariation, WHATSAPP_DISPLAY, whatsappOrderUrl } from '../lib/whatsapp';
-import { supabaseConfigured } from '../lib/env';
+import { qrisEnabled, supabaseConfigured } from '../lib/env';
 
 export default function CheckoutPage() {
   const { user, profile } = useAuth();
   const { items, subtotal, clear } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [method, setMethod] = useState<'qris' | 'whatsapp'>('qris');
+  const [method, setMethod] = useState<'qris' | 'whatsapp'>(qrisEnabled ? 'qris' : 'whatsapp');
   const [buyerName, setBuyerName] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
   const [address, setAddress] = useState('');
@@ -28,6 +28,7 @@ export default function CheckoutPage() {
   const nameRef = useRef<HTMLInputElement>(null);
 
   const chooseMethod = (next: 'qris' | 'whatsapp') => {
+    if (next === 'qris' && !qrisEnabled) return;
     setMethod(next);
     (next === 'qris' ? qrisMethodRef : whatsappMethodRef).current?.focus();
   };
@@ -166,13 +167,15 @@ export default function CheckoutPage() {
               className={`checkout-method ${method === 'qris' ? 'is-active' : ''}`}
               role="radio"
               aria-checked={method === 'qris'}
-              aria-describedby={method === 'qris' && !user ? 'qris-login-note' : undefined}
-              tabIndex={method === 'qris' ? 0 : -1}
+              aria-disabled={!qrisEnabled}
+              aria-describedby={qrisEnabled && method === 'qris' && !user ? 'qris-login-note' : undefined}
+              disabled={!qrisEnabled}
+              tabIndex={qrisEnabled && method === 'qris' ? 0 : -1}
               onClick={() => chooseMethod('qris')}
             >
               <span className="checkout-method-icon"><QrCode size={18}/></span>
-              <span><b>QRIS otomatis</b><small>Bayar dulu, produk langsung tersedia di akun setelah pembayaran sukses.</small></span>
-              {method === 'qris' && <ShieldCheck size={16}/>}
+              <span><b>QRIS otomatis</b><small>{qrisEnabled ? 'Bayar dulu, produk langsung tersedia di akun setelah pembayaran sukses.' : 'Segera aktif. Untuk sekarang, gunakan WhatsApp admin.'}</small></span>
+              {qrisEnabled ? method === 'qris' && <ShieldCheck size={16}/> : <span className="checkout-method-badge">SOON</span>}
             </button>
             <button
               ref={whatsappMethodRef}

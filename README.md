@@ -87,6 +87,8 @@ Checkout works on Android and desktop. On mobile, `wa.me` opens the WhatsApp app
 
 QRIS is the automatic payment path. It requires a logged-in account so the paid order can create `purchases` and unlock the private download in `/account/downloads`.
 
+The checkout UI keeps QRIS disabled by default (`VITE_QRIS_ENABLED=false`) so an unconfigured payment method is not offered to buyers. Set `VITE_QRIS_ENABLED=true` in the GitHub Actions variables and redeploy the Pages build only after the Edge Function secrets below are configured and sandbox-tested. The WhatsApp path remains available in both modes.
+
 Flow:
 
 1. Admin uploads a product, its price, and its file in `/admin/products`.

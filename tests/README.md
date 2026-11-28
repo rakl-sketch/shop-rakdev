@@ -23,6 +23,8 @@ Run these checks in a non-production Supabase project before publishing. The aut
 - If the RPC fails, WhatsApp still opens and the UI shows a clear warning instead of pretending the order was saved.
 
 ## QRIS checkout (BuatQris)
+- With `VITE_QRIS_ENABLED` unset/false, checkout defaults to WhatsApp and the QRIS option is disabled with a "segera aktif" note.
+- Set `VITE_QRIS_ENABLED=true` in GitHub Actions variables and redeploy only after the secrets below are configured.
 - QRIS checkout is blocked for guests; WhatsApp checkout remains available.
 - The `create-qris` Edge Function rejects a missing/invalid session.
 - Change the price in browser DevTools: `create_qris_order` still uses the database price.

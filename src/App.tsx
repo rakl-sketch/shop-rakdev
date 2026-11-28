@@ -5,6 +5,7 @@ import ShopPage from './pages/ShopPage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
+import PaymentPage from './pages/PaymentPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import { AccountLayout, AccountOverview, ProfilePage, PurchasesPage, DownloadsPage, TransactionsPage } from './pages/AccountPage';
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/product/:slug" element={<ProductPage/>}/>
       <Route path="/cart" element={<CartPage/>}/>
       <Route path="/checkout" element={<CheckoutPage/>}/>
+      <Route path="/payment/:orderId" element={<PaymentPage/>}/>
       <Route path="/login" element={<LoginPage/>}/>
       <Route path="/register" element={<RegisterPage/>}/>
       <Route path="/account" element={<AccountLayout/>}>

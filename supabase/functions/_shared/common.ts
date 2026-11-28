@@ -37,6 +37,32 @@ export function adminClient(): SupabaseClient {
   return createClient(url, resolveSecretKey(), { auth: { persistSession: false, autoRefreshToken: false } });
 }
 
+function resolvePublicKey() {
+  const direct = Deno.env.get('SUPABASE_ANON_KEY') ?? Deno.env.get('SUPABASE_PUBLISHABLE_KEY');
+  if (direct) return direct;
+  const keys = Deno.env.get('SUPABASE_PUBLISHABLE_KEYS');
+  if (keys) {
+    try {
+      const parsed = JSON.parse(keys) as Record<string, string>;
+      const match = parsed.anon ?? parsed.default ?? Object.values(parsed)[0];
+      if (match) return match;
+    } catch { /* ignore invalid optional JSON */ }
+  }
+  throw new Error('Supabase publishable key belum dikonfigurasi di Edge Function.');
+}
+
+/** Client dengan JWT pengguna; dipakai untuk RPC yang bergantung pada auth.uid(). */
+export function userClient(request: Request): SupabaseClient {
+  const url = Deno.env.get('SUPABASE_URL');
+  if (!url) throw new Error('SUPABASE_URL tidak tersedia.');
+  const authorization = request.headers.get('Authorization');
+  if (!authorization) throw new Error('Sesi login diperlukan.');
+  return createClient(url, resolvePublicKey(), {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { Authorization: authorization } },
+  });
+}
+
 export async function authenticate(request: Request, client: SupabaseClient) {
   const header = request.headers.get('Authorization') ?? '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : '';

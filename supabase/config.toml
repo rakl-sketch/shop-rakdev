@@ -7,3 +7,7 @@ verify_jwt = false
 # Dipanggil Database Webhook; dijaga header x-webhook-secret.
 [functions.notify-product]
 verify_jwt = false
+
+# Dipanggil server BuatQris; dijaga signature HMAC-SHA256.
+[functions.qris-webhook]
+verify_jwt = false

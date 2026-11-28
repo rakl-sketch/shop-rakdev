@@ -6,6 +6,16 @@ export const shortDate = (value: string) => new Intl.DateTimeFormat('id-ID', {
   day: '2-digit', month: 'short', year: 'numeric',
 }).format(new Date(value));
 
+export const orderChannelLabel = (channel?: string | null) => {
+  switch (channel) {
+    case 'qris': return 'QRIS';
+    case 'whatsapp': return 'WhatsApp';
+    case 'manual': return 'Manual';
+    case 'midtrans': return 'Midtrans';
+    default: return channel || '—';
+  }
+};
+
 export const formatBytes = (bytes?: number | null) => {
   if (!bytes) return '—';
   const units = ['B', 'KB', 'MB', 'GB'];

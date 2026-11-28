@@ -1,6 +1,6 @@
 # Pre-launch test matrix
 
-Run these checks in a non-production Supabase project before publishing. The automated WhatsApp message tests run with `npm test`.
+Run these checks in a non-production Supabase project before publishing. The automated WhatsApp and QRIS helper tests run with `npm test`.
 
 ## Authentication and authorization
 - New signup always creates `profiles.role = customer`, even if a client sends `role=owner` in metadata.
@@ -21,6 +21,24 @@ Run these checks in a non-production Supabase project before publishing. The aut
 - The cart total and the message total match.
 - Checkout opens WhatsApp on Android and desktop; the cart clears after the message is opened.
 - If the RPC fails, WhatsApp still opens and the UI shows a clear warning instead of pretending the order was saved.
+
+## QRIS checkout (BuatQris)
+- QRIS checkout is blocked for guests; WhatsApp checkout remains available.
+- The `create-qris` Edge Function rejects a missing/invalid session.
+- Change the price in browser DevTools: `create_qris_order` still uses the database price.
+- Submit an unpublished product or a product without an active file: the RPC rejects the order.
+- Sandbox requests include `test=1`; production requests do not.
+- The QRIS amount sent to BuatQris equals the server-calculated order total.
+- `/payment/:orderId` shows the sandbox badge, QR/payment link, total, and timer.
+- When the 15-minute timer reaches zero, the QR is hidden and the page asks the buyer to create a new order.
+- If BuatQris returns `total_amount` with a unique code/fee, the payment page shows the payable total separately from the order subtotal.
+- Webhook with a bad signature returns 401 and does not change the order.
+- Webhook with a mismatched amount returns 400 and does not change the order.
+- Duplicate `payment.success` callbacks do not duplicate purchases or notifications.
+- `payment.expired` and `payment.failed` close the order without unlocking downloads.
+- A paid QRIS order creates exactly one purchase per product and unlocks Download Center.
+- Production mode rejects webhooks with `is_test: true` and status checks for payment rows created in sandbox mode.
+- BuatQris secrets are present only in Edge Function secrets, never in the browser bundle.
 
 ## Orders and purchases
 - A new order creates one notification for every admin/owner.
@@ -48,5 +66,5 @@ Run these checks in a non-production Supabase project before publishing. The aut
 - Review uploaded archives and confirm map/backup restore instructions before publishing.
 
 ## Historical data
-- The `payments` table remains readable by admins for old Midtrans records.
+- The `payments` table remains readable by admins for old Midtrans records and new QRIS records.
 - No migration drops tables or deletes existing rows.

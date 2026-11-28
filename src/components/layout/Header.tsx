@@ -112,6 +112,7 @@ export function Header() {
       className={`mobile-drawer ${menuOpen ? 'is-open' : ''}`}
       aria-hidden={!menuOpen}
       aria-label="Navigasi utama"
+      inert={!menuOpen}
     >
       <div className="mobile-drawer-header">
         <Link to="/" className="brand" onClick={closeMenu}>

@@ -4,7 +4,7 @@ import { Link, NavLink, Navigate, useLocation, useParams } from 'react-router-do
 import { Activity, ArrowLeft, ArrowUpRight, Boxes, CreditCard, FolderOpen, LayoutDashboard, LogOut, MessageCircle, PackagePlus, Pencil, ReceiptText, Settings, ShieldCheck, ShoppingBag, Star, Users, X } from 'lucide-react';
 import { useAuth } from '../app/AuthProvider';
 import { supabase } from '../lib/supabase';
-import { rupiah, shortDate } from '../lib/format';
+import { orderChannelLabel, rupiah, shortDate } from '../lib/format';
 import { Button } from '../components/ui/Button';
 import { useToast } from '../components/ui/Toast';
 import { EmptyState } from '../components/shared/EmptyState';
@@ -83,7 +83,7 @@ export default function AdminPage() {
       products: { table: 'products', columns: '*' },
       categories: { table: 'categories', columns: '*' },
       orders: { table: 'orders', columns: 'id,order_number,status,total_amount,created_at,user_id,channel,buyer_name,buyer_phone,shipping_address,notes' },
-      payments: { table: 'payments', columns: 'id,order_id,provider,status,amount,created_at' },
+      payments: { table: 'payments', columns: 'id,order_id,provider,provider_transaction_id,status,amount,is_test,expires_at,paid_at,created_at,orders(order_number)' },
       customers: { table: 'profiles', columns: 'id,display_name,role,created_at' },
       reviews: { table: 'reviews', columns: 'id,product_id,user_id,rating,comment,is_approved,created_at' },
       activity: { table: 'admin_audit_logs', columns: 'id,actor_id,action_type,entity_type,entity_id,created_at' },
@@ -257,7 +257,7 @@ export default function AdminPage() {
 
   const sectionTitle = sections.find((item) => item.slug === section)?.label ?? 'Overview';
   const panelDescription = section === 'payments'
-    ? 'Riwayat pembayaran lama tetap disimpan. Checkout baru menggunakan WhatsApp.'
+    ? 'Transaksi QRIS BuatQris dan riwayat pembayaran lama tetap disimpan.'
     : 'Data terbaru dari database Shop rakDEV.';
 
   return <div className="admin-layout">
@@ -291,7 +291,7 @@ export default function AdminPage() {
             <div className="admin-panel-head"><div><h3>Quick actions</h3><p>Akses cepat untuk mengelola toko.</p></div><Activity size={19}/></div>
             <div className="quick-actions">
               <Link to="/admin/products"><PackagePlus size={19}/><span><b>Tambah produk</b><small>Upload file digital baru</small></span><ArrowUpRight size={15}/></Link>
-              <Link to="/admin/orders"><ReceiptText size={19}/><span><b>Periksa pesanan</b><small>Pesanan WhatsApp terbaru</small></span><ArrowUpRight size={15}/></Link>
+              <Link to="/admin/orders"><ReceiptText size={19}/><span><b>Periksa pesanan</b><small>Pesanan QRIS & WhatsApp terbaru</small></span><ArrowUpRight size={15}/></Link>
               <Link to="/admin/categories"><FolderOpen size={19}/><span><b>Kelola kategori</b><small>Atur katalog produk</small></span><ArrowUpRight size={15}/></Link>
             </div>
           </div>
@@ -306,9 +306,10 @@ export default function AdminPage() {
         <p>Konfigurasi rahasia dikelola di Supabase Dashboard, bukan di halaman publik.</p>
         <div className="settings-row"><span>Supabase connection</span><b>Environment variables</b></div>
         <div className="settings-row"><span>Checkout WhatsApp</span><b>{WHATSAPP_DISPLAY}</b></div>
+        <div className="settings-row"><span>Pembayaran QRIS</span><b>BuatQris · dikonfigurasi di Edge Function secrets</b></div>
         <div className="settings-row"><span>Notifikasi pesanan</span><b>Database trigger + Supabase Realtime</b></div>
         <div className="settings-row"><span>Product storage</span><b>Private bucket: product-files</b></div>
-        <div className="settings-row"><span>Riwayat pembayaran</span><b>Tabel payments lama tetap disimpan</b></div>
+        <div className="settings-row"><span>Riwayat pembayaran</span><b>Tabel payments · QRIS + historis</b></div>
         <div className="settings-warning">Jangan pernah memasukkan Supabase Secret Key, service_role key, atau kredensial pembayaran ke frontend.</div>
       </div> : <div className="admin-panel admin-table-panel">
         <div className="admin-panel-head">
@@ -320,6 +321,7 @@ export default function AdminPage() {
           <table className="admin-table">
             <thead><tr>{section === 'products' ? ['Produk', 'Slug', 'Harga', 'Kategori', 'Status', 'Dibuat', 'Aksi']
               : section === 'orders' ? ['Pesanan', 'Pembeli', 'Kontak', 'Total', 'Status', 'Tanggal']
+              : section === 'payments' ? ['Pesanan', 'Provider', 'Transaksi', 'Nominal', 'Status', 'Mode', 'Dibuat']
               : section === 'categories' ? ['Nama', 'Slug', 'Urutan', 'Dibuat']
               : Object.keys(rows[0]).slice(0, 6).map((key) => key.replaceAll('_', ' '))}</tr></thead>
             <tbody>{rows.map((row, index) => <tr key={String(row.id ?? index)}>
@@ -332,11 +334,19 @@ export default function AdminPage() {
                 <td>{row.created_at ? shortDate(String(row.created_at)) : '—'}</td>
                 <td><div className="table-actions"><button className="table-action" onClick={() => openEdit(row)}><Pencil size={12}/> Edit</button><button className="table-action" onClick={() => void togglePublish(String(row.id), Boolean(row.is_published))}>{row.is_published ? 'Unpublish' : 'Publish'}</button></div></td>
               </> : section === 'orders' ? <>
-                <td><b>{String(row.order_number ?? '—')}</b><small className="table-sub">{String(row.channel ?? 'midtrans')}</small></td>
+                <td><b>{String(row.order_number ?? '—')}</b><small className="table-sub">{orderChannelLabel(String(row.channel ?? 'midtrans'))}</small></td>
                 <td><b>{String(row.buyer_name ?? row.user_id ?? 'Guest')}</b>{row.shipping_address ? <small className="table-sub">{String(row.shipping_address)}</small> : null}{row.notes ? <small className="table-sub">{String(row.notes)}</small> : null}</td>
                 <td>{row.buyer_phone ? <a className="table-wa-link" href={whatsappChatUrl(String(row.buyer_phone))} target="_blank" rel="noreferrer"><MessageCircle size={13}/> {String(row.buyer_phone)}</a> : '—'}</td>
                 <td>{rupiah(Number(row.total_amount ?? 0))}</td>
                 <td><select className="order-status-select" value={String(row.status ?? 'pending')} disabled={updatingOrder === String(row.id)} onChange={(event) => void changeOrderStatus(String(row.id), event.target.value as OrderStatus)}>{statusOptions.map((status) => <option key={status} value={status}>{status}</option>)}</select></td>
+                <td>{row.created_at ? shortDate(String(row.created_at)) : '—'}</td>
+              </> : section === 'payments' ? <>
+                <td><b>{String((row.orders as { order_number?: string } | null)?.order_number ?? String(row.order_id ?? '—').slice(0, 8))}</b><small className="table-sub">{String(row.order_id ?? '')}</small></td>
+                <td>{String(row.provider ?? '—')}</td>
+                <td>{String(row.provider_transaction_id ?? '—')}</td>
+                <td>{rupiah(Number(row.amount ?? 0))}</td>
+                <td><span className={`status-pill status-${row.status === 'success' ? 'paid' : row.status === 'pending' ? 'pending' : 'failed'}`}>{String(row.status ?? '—')}</span></td>
+                <td>{row.is_test ? 'Sandbox' : 'Production'}</td>
                 <td>{row.created_at ? shortDate(String(row.created_at)) : '—'}</td>
               </> : section === 'categories' ? <>
                 <td>{String(row.name ?? '—')}</td>
@@ -356,7 +366,7 @@ export default function AdminPage() {
         <label>Nama produk<input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required maxLength={120}/></label>
         <label>Slug (opsional)<input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="dibuat-otomatis-dari-nama"/></label>
         <label>Kategori<select value={form.category_id} onChange={(event) => setForm({ ...form, category_id: event.target.value })} required><option value="">Pilih kategori</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-        <label>Harga (IDR)<input type="number" value={form.price} onChange={(event) => setForm({ ...form, price: event.target.value })} min="1000" required/></label>
+        <label>Harga (IDR) <small>Dipakai saat membuat QRIS</small><input type="number" value={form.price} onChange={(event) => setForm({ ...form, price: event.target.value })} min="1000" required/></label>
         <label>Deskripsi<textarea value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} rows={3} required/></label>
         <div className="admin-form-two"><label>Versi Minecraft<input value={form.minecraft_version} onChange={(event) => setForm({ ...form, minecraft_version: event.target.value })} placeholder="1.21.x"/></label><label>Platform<input value={form.platform} onChange={(event) => setForm({ ...form, platform: event.target.value })} placeholder="Paper / Java Edition"/></label></div>
         <label>File produk <small>Wajib · Maksimum 500 MB di UI ini</small><input type="file" accept=".jar,.sk,.zip,.tar,.gz,.mcworld,.schem,.litematic" onChange={(event) => setProductFile(event.target.files?.[0] ?? null)} required/></label>
@@ -371,7 +381,7 @@ export default function AdminPage() {
         <label>Nama produk<input value={editForm.name} onChange={(event) => setEditForm({ ...editForm, name: event.target.value })} required maxLength={120}/></label>
         <label>Slug<input value={editForm.slug} onChange={(event) => setEditForm({ ...editForm, slug: event.target.value })}/></label>
         <label>Kategori<select value={editForm.category_id} onChange={(event) => setEditForm({ ...editForm, category_id: event.target.value })} required><option value="">Pilih kategori</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
-        <label>Harga (IDR)<input type="number" value={editForm.price} onChange={(event) => setEditForm({ ...editForm, price: event.target.value })} min="1000" required/></label>
+        <label>Harga (IDR) <small>Dipakai saat membuat QRIS</small><input type="number" value={editForm.price} onChange={(event) => setEditForm({ ...editForm, price: event.target.value })} min="1000" required/></label>
         <label>Deskripsi<textarea value={editForm.description} onChange={(event) => setEditForm({ ...editForm, description: event.target.value })} rows={3} required/></label>
         <div className="admin-form-two"><label>Versi Minecraft<input value={editForm.minecraft_version} onChange={(event) => setEditForm({ ...editForm, minecraft_version: event.target.value })}/></label><label>Platform<input value={editForm.platform} onChange={(event) => setEditForm({ ...editForm, platform: event.target.value })}/></label></div>
         <div className="admin-checkbox-row"><label><input type="checkbox" checked={editForm.is_featured} onChange={(event) => setEditForm({ ...editForm, is_featured: event.target.checked })}/> Featured</label><label><input type="checkbox" checked={editForm.is_new} onChange={(event) => setEditForm({ ...editForm, is_new: event.target.checked })}/> New</label></div>

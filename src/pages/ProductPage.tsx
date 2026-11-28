@@ -28,7 +28,7 @@ export default function ProductPage() {
         <p className="detail-description">{product.description}</p>
         <div className="detail-specs"><div><span>VERSI MINECRAFT</span><b>{product.minecraft_version ?? 'Lihat deskripsi'}</b></div><div><span>PLATFORM</span><b>{product.platform ?? 'Sesuai deskripsi'}</b></div><div><span>UKURAN FILE</span><b>{product.file_size ?? 'Informasi belum tersedia'}</b></div><div><span>FORMAT</span><b>{product.category_slug === 'plugins' ? 'JAR / ZIP' : product.category_slug === 'skript' ? 'SK / ZIP' : 'ZIP / ARCHIVE'}</b></div></div>
         <div className="detail-buttons"><Button full onClick={addToCart} disabled={!canBuy}><ShoppingBag size={17}/> Tambah ke keranjang</Button><Button full variant="outline" onClick={() => { addToCart(); navigate('/checkout'); }} disabled={!canBuy}>Beli sekarang <ArrowUpRight size={16}/></Button></div>
-        <div className="detail-assurance"><div><ShieldCheck size={18}/><span><b>Konfirmasi via WhatsApp</b><small>Pesanan diteruskan ke admin melalui WhatsApp untuk konfirmasi pembayaran.</small></span></div><div><Download size={18}/><span><b>Download dari akun</b><small>File dapat diunduh ulang dari halaman pembelian.</small></span></div></div>
+        <div className="detail-assurance"><div><ShieldCheck size={18}/><span><b>QRIS atau WhatsApp</b><small>Bayar otomatis dengan QRIS, atau konfirmasi manual melalui WhatsApp.</small></span></div><div><Download size={18}/><span><b>Download dari akun</b><small>Setelah pembayaran sukses, file tersedia di Download Center.</small></span></div></div>
         <div className="detail-note"><Check size={15}/> Pastikan kompatibilitas produk sebelum melakukan pembelian.</div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Blocks, Boxes, Check, Download, MessageCircle, Terminal } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Blocks, Boxes, Check, Download, QrCode, Terminal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getProducts } from '../services/products';
 import type { Product } from '../types';
@@ -16,8 +16,8 @@ const categories = [
 
 const steps = [
   { number: '01', title: 'Pilih produk', description: 'Periksa deskripsi, versi Minecraft, platform, dan detail file sebelum membeli.' },
-  { number: '02', title: 'Checkout via WhatsApp', description: 'Keranjang dan data pembeli otomatis disusun menjadi pesan WhatsApp untuk admin.' },
-  { number: '03', title: 'Terima produk', description: 'Setelah pembayaran dikonfirmasi, produk digital dikirim atau dibuka di akun kamu.' },
+  { number: '02', title: 'Checkout & bayar', description: 'Pilih QRIS untuk pembayaran otomatis, atau WhatsApp untuk konfirmasi manual dengan admin.' },
+  { number: '03', title: 'Terima produk', description: 'Setelah pembayaran sukses, produk digital otomatis tersedia di akun dan Download Center.' },
 ];
 
 export default function HomePage() {
@@ -47,7 +47,7 @@ export default function HomePage() {
           </div>
           <div className="home-hero-meta">
             <span><Check size={14}/> File siap unduh</span>
-            <span><MessageCircle size={14}/> Checkout via WhatsApp</span>
+            <span><QrCode size={14}/> Checkout QRIS otomatis</span>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function HomePage() {
             <h2>Tiga langkah, <em>tanpa ribet.</em></h2>
           </div>
           <div className="home-section-aside">
-            <p>Pilih produk, checkout lewat WhatsApp, lalu terima file setelah pembayaran dikonfirmasi.</p>
+            <p>Pilih produk, bayar dengan QRIS atau konfirmasi via WhatsApp, lalu terima file di akun.</p>
           </div>
         </div>
         <div className="home-process-grid">

@@ -10,6 +10,7 @@ import { useToast } from '../components/ui/Toast';
 import { EmptyState } from '../components/shared/EmptyState';
 import { NotificationBell } from '../features/notifications/NotificationBell';
 import { updateOrderStatus } from '../services/orders';
+import { useDialogFocus } from '../lib/useDialogFocus';
 import { WHATSAPP_DISPLAY, whatsappChatUrl } from '../lib/whatsapp';
 import type { OrderStatus } from '../types';
 
@@ -66,6 +67,10 @@ export default function AdminPage() {
   const [categoryForm, setCategoryForm] = useState<CategoryForm>(emptyCategoryForm);
   const [categorySaving, setCategorySaving] = useState(false);
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+  const createDialogRef = useDialogFocus<HTMLFormElement>(showForm, () => setShowForm(false));
+  const editDialogRef = useDialogFocus<HTMLFormElement>(Boolean(editingId), () => setEditingId(null));
+  const categoryDialogRef = useDialogFocus<HTMLFormElement>(showCategoryForm, () => setShowCategoryForm(false));
+  const modalOpen = showForm || Boolean(editingId) || showCategoryForm;
 
   useEffect(() => {
     if (!supabase || !profile || !['admin', 'owner'].includes(profile.role)) return;
@@ -106,18 +111,6 @@ export default function AdminPage() {
     if (!supabase || !profile || !['admin', 'owner'].includes(profile.role)) return;
     void supabase.from('categories').select('id,name').order('sort_order').then(({ data }) => setCategories(data ?? []));
   }, [profile?.id, profile?.role]);
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setShowForm(false);
-        setEditingId(null);
-        setShowCategoryForm(false);
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, []);
 
   if (loading) return <div className="admin-loading">Memeriksa akses admin…</div>;
   if (!user) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname)}`} replace/>;
@@ -259,9 +252,14 @@ export default function AdminPage() {
   const panelDescription = section === 'payments'
     ? 'Transaksi QRIS BuatQris dan riwayat pembayaran lama tetap disimpan.'
     : 'Data terbaru dari database Shop rakDEV.';
+  const tableHeadings = section === 'products' ? ['Produk', 'Slug', 'Harga', 'Kategori', 'Status', 'Dibuat', 'Aksi']
+    : section === 'orders' ? ['Pesanan', 'Pembeli', 'Kontak', 'Total', 'Status', 'Tanggal']
+    : section === 'payments' ? ['Pesanan', 'Provider', 'Transaksi', 'Nominal', 'Status', 'Mode', 'Dibuat']
+    : section === 'categories' ? ['Nama', 'Slug', 'Urutan', 'Dibuat']
+    : Object.keys(rows[0] ?? {}).slice(0, 6).map((key) => key.replaceAll('_', ' '));
 
   return <div className="admin-layout">
-    <aside className="admin-sidebar">
+    <aside className="admin-sidebar" inert={modalOpen}>
       <Link to="/" className="brand"><span className="brand-mark">r<span>.</span></span><span className="brand-word">rakDEV<small>control panel</small></span></Link>
       <div className="admin-side-label">WORKSPACE</div>
       <nav>{sections.map(({ slug, label, icon: Icon }) => <NavLink key={slug} to={slug === 'overview' ? '/admin' : `/admin/${slug}`} end={slug === 'overview'}><Icon size={17}/>{label}{section === slug && <i/>}</NavLink>)}</nav>
@@ -272,7 +270,7 @@ export default function AdminPage() {
       </div>
     </aside>
 
-    <main className="admin-main">
+    <main className="admin-main" inert={modalOpen}>
       <header className="admin-topbar">
         <div><span className="admin-breadcrumb">SHOP rakDEV / ADMIN</span><h1>{sectionTitle}</h1></div>
         <div className="admin-top-right"><NotificationBell/><span className="admin-online"><i/> System workspace</span><span className="admin-avatar">{(profile.display_name || 'A').slice(0, 1).toUpperCase()}</span></div>
@@ -317,13 +315,9 @@ export default function AdminPage() {
           {section === 'products' && <Button onClick={() => setShowForm(true)}><PackagePlus size={16}/> Tambah produk</Button>}
           {section === 'categories' && <Button onClick={() => setShowCategoryForm(true)}><FolderOpen size={16}/> Tambah kategori</Button>}
         </div>
-        {loadingRows ? <div className="admin-table-loading">Memuat data…</div> : rows.length ? <div className="admin-table-scroll">
+        {loadingRows ? <div className="admin-table-loading">Memuat data…</div> : rows.length ? <div className="admin-table-scroll" role="region" aria-label={`Tabel ${sectionTitle}`} tabIndex={0}>
           <table className="admin-table">
-            <thead><tr>{section === 'products' ? ['Produk', 'Slug', 'Harga', 'Kategori', 'Status', 'Dibuat', 'Aksi']
-              : section === 'orders' ? ['Pesanan', 'Pembeli', 'Kontak', 'Total', 'Status', 'Tanggal']
-              : section === 'payments' ? ['Pesanan', 'Provider', 'Transaksi', 'Nominal', 'Status', 'Mode', 'Dibuat']
-              : section === 'categories' ? ['Nama', 'Slug', 'Urutan', 'Dibuat']
-              : Object.keys(rows[0]).slice(0, 6).map((key) => key.replaceAll('_', ' '))}</tr></thead>
+            <thead><tr>{tableHeadings.map((heading) => <th key={heading} scope="col">{heading}</th>)}</tr></thead>
             <tbody>{rows.map((row, index) => <tr key={String(row.id ?? index)}>
               {section === 'products' ? <>
                 <td>{String(row.name ?? '—')}</td>
@@ -361,9 +355,9 @@ export default function AdminPage() {
     </main>
 
     {showForm && <div className="modal-backdrop" role="presentation" onClick={() => setShowForm(false)}>
-      <form className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="product-create-title" onClick={(event) => event.stopPropagation()} onSubmit={createProduct}>
-        <div className="modal-heading"><div><span className="eyebrow">PRODUCT MANAGEMENT</span><h2 id="product-create-title">Tambah produk</h2></div><button type="button" className="icon-button" onClick={() => setShowForm(false)}><X size={19}/></button></div>
-        <label>Nama produk<input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required maxLength={120}/></label>
+      <form ref={createDialogRef} className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="product-create-title" tabIndex={-1} onClick={(event) => event.stopPropagation()} onSubmit={createProduct}>
+        <div className="modal-heading"><div><span className="eyebrow">PRODUCT MANAGEMENT</span><h2 id="product-create-title">Tambah produk</h2></div><button type="button" className="icon-button" aria-label="Tutup dialog tambah produk" onClick={() => setShowForm(false)}><X size={19}/></button></div>
+        <label>Nama produk<input data-autofocus value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required maxLength={120}/></label>
         <label>Slug (opsional)<input value={form.slug} onChange={(event) => setForm({ ...form, slug: event.target.value })} placeholder="dibuat-otomatis-dari-nama"/></label>
         <label>Kategori<select value={form.category_id} onChange={(event) => setForm({ ...form, category_id: event.target.value })} required><option value="">Pilih kategori</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
         <label>Harga (IDR) <small>Dipakai saat membuat QRIS</small><input type="number" value={form.price} onChange={(event) => setForm({ ...form, price: event.target.value })} min="1000" required/></label>
@@ -376,9 +370,9 @@ export default function AdminPage() {
     </div>}
 
     {editingId && <div className="modal-backdrop" role="presentation" onClick={() => setEditingId(null)}>
-      <form className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="product-edit-title" onClick={(event) => event.stopPropagation()} onSubmit={updateProduct}>
-        <div className="modal-heading"><div><span className="eyebrow">PRODUCT MANAGEMENT</span><h2 id="product-edit-title">Edit produk</h2></div><button type="button" className="icon-button" onClick={() => setEditingId(null)}><X size={19}/></button></div>
-        <label>Nama produk<input value={editForm.name} onChange={(event) => setEditForm({ ...editForm, name: event.target.value })} required maxLength={120}/></label>
+      <form ref={editDialogRef} className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="product-edit-title" tabIndex={-1} onClick={(event) => event.stopPropagation()} onSubmit={updateProduct}>
+        <div className="modal-heading"><div><span className="eyebrow">PRODUCT MANAGEMENT</span><h2 id="product-edit-title">Edit produk</h2></div><button type="button" className="icon-button" aria-label="Tutup dialog edit produk" onClick={() => setEditingId(null)}><X size={19}/></button></div>
+        <label>Nama produk<input data-autofocus value={editForm.name} onChange={(event) => setEditForm({ ...editForm, name: event.target.value })} required maxLength={120}/></label>
         <label>Slug<input value={editForm.slug} onChange={(event) => setEditForm({ ...editForm, slug: event.target.value })}/></label>
         <label>Kategori<select value={editForm.category_id} onChange={(event) => setEditForm({ ...editForm, category_id: event.target.value })} required><option value="">Pilih kategori</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
         <label>Harga (IDR) <small>Dipakai saat membuat QRIS</small><input type="number" value={editForm.price} onChange={(event) => setEditForm({ ...editForm, price: event.target.value })} min="1000" required/></label>
@@ -390,9 +384,9 @@ export default function AdminPage() {
     </div>}
 
     {showCategoryForm && <div className="modal-backdrop" role="presentation" onClick={() => setShowCategoryForm(false)}>
-      <form className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="category-create-title" onClick={(event) => event.stopPropagation()} onSubmit={createCategory}>
-        <div className="modal-heading"><div><span className="eyebrow">CATEGORY MANAGEMENT</span><h2 id="category-create-title">Tambah kategori</h2></div><button type="button" className="icon-button" onClick={() => setShowCategoryForm(false)}><X size={19}/></button></div>
-        <label>Nama kategori<input value={categoryForm.name} onChange={(event) => setCategoryForm({ ...categoryForm, name: event.target.value })} required maxLength={80}/></label>
+      <form ref={categoryDialogRef} className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="category-create-title" tabIndex={-1} onClick={(event) => event.stopPropagation()} onSubmit={createCategory}>
+        <div className="modal-heading"><div><span className="eyebrow">CATEGORY MANAGEMENT</span><h2 id="category-create-title">Tambah kategori</h2></div><button type="button" className="icon-button" aria-label="Tutup dialog tambah kategori" onClick={() => setShowCategoryForm(false)}><X size={19}/></button></div>
+        <label>Nama kategori<input data-autofocus value={categoryForm.name} onChange={(event) => setCategoryForm({ ...categoryForm, name: event.target.value })} required maxLength={80}/></label>
         <label>Slug (opsional)<input value={categoryForm.slug} onChange={(event) => setCategoryForm({ ...categoryForm, slug: event.target.value })} placeholder="dibuat-otomatis-dari-nama"/></label>
         <label>Deskripsi<input value={categoryForm.description} onChange={(event) => setCategoryForm({ ...categoryForm, description: event.target.value })} maxLength={200}/></label>
         <label>Urutan<input type="number" value={categoryForm.sort_order} onChange={(event) => setCategoryForm({ ...categoryForm, sort_order: event.target.value })} min="0"/></label>

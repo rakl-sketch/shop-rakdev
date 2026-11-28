@@ -50,6 +50,8 @@ export function ToastProvider({ children }: PropsWithChildren) {
       {items.map((item) => <div
         className={`toast toast-${item.tone}`}
         key={item.id}
+        role={item.tone === 'error' ? 'alert' : 'status'}
+        aria-atomic="true"
         onMouseEnter={() => clearTimer(item.id)}
         onMouseLeave={() => startTimer(item.id)}
         onFocus={() => clearTimer(item.id)}

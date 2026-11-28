@@ -34,7 +34,16 @@ export default function HomePage() {
   return <>
     <section className="home-hero">
       <div className="home-hero-media" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=1600&q=90" alt=""/>
+        <img
+          src="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=1600&q=85"
+          srcSet="https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=800&q=80 800w, https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=1200&q=82 1200w, https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=1600&q=85 1600w, https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=2000&q=85 2000w"
+          sizes="(max-width: 720px) 100vw, 58vw"
+          width={1600}
+          height={1000}
+          alt=""
+          decoding="async"
+          fetchPriority="high"
+        />
       </div>
       <div className="page-container home-hero-inner">
         <div className="home-hero-copy">

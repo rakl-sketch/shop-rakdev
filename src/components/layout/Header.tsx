@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Menu, Search, ShoppingBag, UserRound, X, ChevronDown, ShieldCheck } from 'lucide-react';
@@ -20,19 +20,66 @@ export function Header() {
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  const categoryRef = useRef<HTMLDivElement>(null);
+  const categoryTriggerRef = useRef<HTMLButtonElement>(null);
+  const categoryMenuRef = useRef<HTMLDivElement>(null);
+  const [categoryOpen, setCategoryOpen] = useState(false);
 
   useEffect(() => {
     if (!menuOpen) return;
+    const trigger = menuTriggerRef.current;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false);
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab' || !drawerRef.current) return;
+      const focusable = Array.from(drawerRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )).filter((element) => element.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
+    const focusTimer = window.setTimeout(() => {
+      drawerRef.current?.querySelector<HTMLElement>('a[href], button:not([disabled])')?.focus();
+    }, 0);
     document.addEventListener('keydown', onKeyDown);
     document.body.style.overflow = 'hidden';
     return () => {
+      window.clearTimeout(focusTimer);
       document.removeEventListener('keydown', onKeyDown);
       document.body.style.overflow = '';
+      trigger?.focus();
     };
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!categoryOpen) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (!categoryRef.current?.contains(event.target as Node)) setCategoryOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setCategoryOpen(false);
+      categoryTriggerRef.current?.focus();
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [categoryOpen]);
 
   const submitSearch = (event: FormEvent) => {
     event.preventDefault();
@@ -58,6 +105,7 @@ export function Header() {
     <header className="site-header">
       <div className="header-main page-container">
         <button
+          ref={menuTriggerRef}
           className="icon-button mobile-menu-trigger"
           aria-label={menuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
           aria-expanded={menuOpen}
@@ -94,10 +142,31 @@ export function Header() {
       <nav className="category-nav" aria-label="Navigasi utama">
         <div className="page-container category-nav-inner">
           {nav.map((item) => <NavLink key={item.to} to={item.to} end={item.to === '/'}>{item.label}</NavLink>)}
-          <div className="nav-dropdown">
-            <span>Kategori <ChevronDown size={13}/></span>
-            <div className="dropdown-menu">
-              {categories.map((item) => <Link key={item.slug} to={`/shop?category=${item.slug}`}>{item.label}</Link>)}
+          <div
+            ref={categoryRef}
+            className={`nav-dropdown ${categoryOpen ? 'is-open' : ''}`}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node)) setCategoryOpen(false);
+            }}
+          >
+            <button
+              ref={categoryTriggerRef}
+              type="button"
+              className="nav-dropdown-trigger"
+              aria-expanded={categoryOpen}
+              aria-controls="category-menu"
+              onClick={() => setCategoryOpen((value) => !value)}
+              onKeyDown={(event) => {
+                if (event.key !== 'ArrowDown') return;
+                event.preventDefault();
+                setCategoryOpen(true);
+                window.setTimeout(() => categoryMenuRef.current?.querySelector<HTMLElement>('a')?.focus(), 0);
+              }}
+            >
+              Kategori <ChevronDown size={13}/>
+            </button>
+            <div ref={categoryMenuRef} className="dropdown-menu" id="category-menu">
+              {categories.map((item) => <Link key={item.slug} to={`/shop?category=${item.slug}`} onClick={() => setCategoryOpen(false)}>{item.label}</Link>)}
             </div>
           </div>
           <Link to="/about">Tentang</Link>
@@ -108,6 +177,7 @@ export function Header() {
 
     {menuOpen && <button type="button" className="mobile-drawer-backdrop" aria-label="Tutup menu" onClick={closeMenu}/>}
     <aside
+      ref={drawerRef}
       id="mobile-navigation"
       className={`mobile-drawer ${menuOpen ? 'is-open' : ''}`}
       aria-hidden={!menuOpen}

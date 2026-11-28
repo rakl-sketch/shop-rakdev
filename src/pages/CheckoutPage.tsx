@@ -22,12 +22,24 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  const [nameError, setNameError] = useState('');
   const qrisMethodRef = useRef<HTMLButtonElement>(null);
   const whatsappMethodRef = useRef<HTMLButtonElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
 
   const chooseMethod = (next: 'qris' | 'whatsapp') => {
     setMethod(next);
     (next === 'qris' ? qrisMethodRef : whatsappMethodRef).current?.focus();
+  };
+
+  const validateName = () => {
+    if (buyerName.trim().length >= 2) {
+      setNameError('');
+      return true;
+    }
+    setNameError('Nama pembeli wajib diisi minimal 2 karakter.');
+    nameRef.current?.focus();
+    return false;
   };
 
   useEffect(() => {
@@ -50,16 +62,14 @@ export default function CheckoutPage() {
     event.preventDefault();
     if (saving) return;
 
+    if (method === 'qris' && !user) {
+      toast('Login diperlukan agar produk bisa dikirim ke akunmu setelah pembayaran.', 'info');
+      navigate(`/login?next=${encodeURIComponent('/checkout')}`);
+      return;
+    }
+    if (!validateName()) return;
+
     if (method === 'qris') {
-      if (!user) {
-        toast('Login diperlukan agar produk bisa dikirim ke akunmu setelah pembayaran.', 'info');
-        navigate(`/login?next=${encodeURIComponent('/checkout')}`);
-        return;
-      }
-      if (buyerName.trim().length < 2) {
-        toast('Nama pembeli wajib diisi minimal 2 karakter.', 'error');
-        return;
-      }
       if (!supabaseConfigured) {
         toast('Pembayaran QRIS belum dikonfigurasi.', 'error');
         return;
@@ -77,11 +87,6 @@ export default function CheckoutPage() {
       } finally {
         setSaving(false);
       }
-      return;
-    }
-
-    if (buyerName.trim().length < 2) {
-      toast('Nama pembeli wajib diisi minimal 2 karakter.', 'error');
       return;
     }
 
@@ -123,7 +128,7 @@ export default function CheckoutPage() {
 
     <div className="checkout-grid">
       <section className="checkout-main">
-        <form id="checkout-form" className="checkout-panel checkout-form" onSubmit={submit}>
+        <form id="checkout-form" className="checkout-panel checkout-form" onSubmit={submit} noValidate>
           <div className="checkout-panel-title">
             <span className="step-badge">01</span>
             <div><h3>Data pembeli</h3><p>{method === 'qris' ? 'Data ini dipakai untuk pesanan dan notifikasi pembayaran QRIS.' : 'Data ini akan dimasukkan otomatis ke pesan WhatsApp.'}</p></div>
@@ -146,9 +151,12 @@ export default function CheckoutPage() {
             role="radiogroup"
             aria-label="Metode pembayaran"
             onKeyDown={(event) => {
-              if (['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'].includes(event.key)) {
+              if (['ArrowLeft', 'ArrowUp', 'Home'].includes(event.key)) {
                 event.preventDefault();
-                chooseMethod(method === 'qris' ? 'whatsapp' : 'qris');
+                chooseMethod('qris');
+              } else if (['ArrowRight', 'ArrowDown', 'End'].includes(event.key)) {
+                event.preventDefault();
+                chooseMethod('whatsapp');
               }
             }}
           >
@@ -158,6 +166,7 @@ export default function CheckoutPage() {
               className={`checkout-method ${method === 'qris' ? 'is-active' : ''}`}
               role="radio"
               aria-checked={method === 'qris'}
+              aria-describedby={method === 'qris' && !user ? 'qris-login-note' : undefined}
               tabIndex={method === 'qris' ? 0 : -1}
               onClick={() => chooseMethod('qris')}
             >
@@ -180,7 +189,7 @@ export default function CheckoutPage() {
             </button>
           </div>
 
-          {method === 'qris' && !user && <div className="checkout-login-note">
+          {method === 'qris' && !user && <div className="checkout-login-note" id="qris-login-note">
             <LockKeyhole size={16}/>
             <span>QRIS otomatis memerlukan akun agar produk bisa dikirim ke Download Center. <Link to={`/login?next=${encodeURIComponent('/checkout')}`}>Masuk</Link> atau <Link to="/register">daftar</Link>.</span>
           </div>}
@@ -188,7 +197,22 @@ export default function CheckoutPage() {
           <div className="checkout-fields">
             <label className="checkout-field">
               <span><UserRound size={14}/> Nama pembeli <b>*</b></span>
-              <input value={buyerName} onChange={(event) => setBuyerName(event.target.value)} placeholder="Nama lengkap" required minLength={2} maxLength={120} autoComplete="name"/>
+              <input
+                ref={nameRef}
+                value={buyerName}
+                onChange={(event) => {
+                  setBuyerName(event.target.value);
+                  if (nameError) setNameError('');
+                }}
+                placeholder="Nama lengkap"
+                required
+                minLength={2}
+                maxLength={120}
+                autoComplete="name"
+                aria-invalid={Boolean(nameError)}
+                aria-describedby={nameError ? 'buyer-name-error' : undefined}
+              />
+              {nameError && <small className="checkout-field-error" id="buyer-name-error" role="alert">{nameError}</small>}
             </label>
             <label className="checkout-field">
               <span><Phone size={14}/> Nomor WhatsApp <small>opsional</small></span>

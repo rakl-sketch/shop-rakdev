@@ -7,7 +7,7 @@ const categoryIcon: Record<string, string> = { plugins: 'PLUGIN', skript: 'SKRIP
 export function ProductCard({ product }: { product: Product }) {
   return <article className="product-card">
     <Link to={`/product/${product.slug}`} className="product-image-wrap" aria-label={`Lihat ${product.name}`}>
-      {product.image_url ? <img src={product.image_url} alt={product.name} loading="lazy"/> : <div className="image-placeholder" aria-hidden="true"><span>{categoryIcon[product.category_slug]}</span></div>}
+      {product.image_url ? <img src={product.image_url} alt={product.name} loading="lazy" decoding="async" width={640} height={420}/> : <div className="image-placeholder" aria-hidden="true"><span>{categoryIcon[product.category_slug]}</span></div>}
       <div className="image-tags">{product.is_new && <span className="tag tag-new">NEW</span>}{product.is_featured && <span className="tag">PILIHAN</span>}</div>
       <span className="image-arrow"><ArrowUpRight size={17}/></span>
     </Link>
